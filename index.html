@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FTCF Official App</title>
+<!-- PWA Meta Tags -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f172a">
+<script src="https://cdn.tailwindcss.com"></script>
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+rel="stylesheet">
+<style>
+body.dark { background-color: #0f172a; color: #f8fafc; }
+.glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); border: 1px solid
+rgba(255, 255, 255, 0.1); border-radius: 24px; shadow: 0 8px 32px 0 rgba(0,0,0,0.2); }
+.dark .glass { background: rgba(30, 41, 59, 0.7); }
+.gradient-gold { background: linear-gradient(45deg, #c7a343, #f1c40f);
+-webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.crown-bounce { animation: bounce 2s infinite; }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform:
+translateY(-10px); } }
+#install-banner { display: none; }
+</style>
+</head>
+<body class="bg-slate-50 transition-colors duration-500 font-sans">
+<!-- App Install Prompt -->
+<div id="install-banner" class="fixed top-0 left-0 w-full z-[100] bg-amber-600 text-white p-3
+flex justify-between items-center shadow-2xl">
+<div class="flex items-center gap-3">
+<i class="fas fa-mobile-alt text-xl"></i>
+<p class="text-sm font-bold">Install FTCF Official App</p>
+</div>
+<button id="install-btn" class="bg-white text-amber-600 px-4 py-1 rounded-full text-xs
+font-black uppercase">Install</button>
+</div> <!-- Header Section -->
+<header class="relative h-64 bg-slate-900 flex flex-col items-center justify-center text-center
+p-6">
+<h1 class="relative z-10 text-2xl md:text-4xl font-black text-white uppercase
+tracking-tight">Family Trust & Care Foundation</h1>
+<p id="motto" class="relative z-10 text-sm md:text-lg font-bold gradient-gold italic mt-2
+min-h-[1.5rem]"></p>
+<button onclick="document.body.classList.toggle('dark')" class="absolute top-6 right-6 p-3
+glass text-white rounded-full shadow-lg hover:rotate-90 transition-all duration-500"><i class="fas
+fa-adjust"></i></button>
+</header>
+<main class="max-w-4xl mx-auto px-4 -mt-12 pb-20 space-y-6 relative z-20">
+<!-- Main Stats Card -->
+<div class="grid grid-cols-1 gap-6">
+<div class="glass p-6 text-center border-b-4 border-green-500 shadow-xl bg-white/90
+dark:bg-slate-800/90">
+<h3 class="text-[10px] uppercase font-black opacity-50 tracking-widest">Total Trust
+Balance</h3>
+<p id="grand-total" class="text-4xl font-black text-slate-900 dark:text-white">Rs. 0</p>
+</div>
+<!-- Auto-Ranked Top Contributor -->
+<div class="glass p-6 border-b-4 border-amber-500 shadow-xl bg-white/90
+dark:bg-slate-800/90 relative overflow-hidden">
+<div class="flex items-center gap-6 relative z-10">
+<div class="relative">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 crown-bounce
+text-amber-500 text-2xl"><i class="fas fa-crown"></i></div>
+<img id="top-img"
+src="https://ui-avatars.com/api/?name=FTCF&background=random" class="w-24 h-24
+rounded-2xl border-2 border-amber-500 object-cover shadow-lg">
+</div>
+<div>
+<span class="text-[8px] font-black bg-amber-500 text-white px-2 py-0.5
+rounded-full uppercase italic">Top Contributor</span>
+<h2 id="top-name" class="text-2xl font-black gradient-gold truncate
+w-40">Loading...</h2>
+<p id="top-fund" class="text-xl font-black text-amber-600">Rs. 0</p>
+</div>
+</div>
+</div>
+</div> <!-- Dashboard Access Buttons -->
+<div class="space-y-3">
+<h3 class="text-xs font-black uppercase opacity-60 ml-2 tracking-widest">Live
+Dashboards</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Dashboard 1: Financial Record -->
+<a href="https://totalbalancerecord.netlify.app" target="_blank" class="glass p-5 flex
+items-center justify-between hover:bg-amber-500/10 transition-all border-l-4 border-amber-500
+group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center
+justify-center text-amber-600"><i class="fas fa-chart-line text-xl"></i></div>
+<div>
+<p class="font-black text-sm uppercase">Financial Record</p>
+<p class="text-[9px] opacity-60">Total Balance Tracking</p>
+</div>
+</div>
+<i class="fas fa-external-link-alt text-xs opacity-30"></i>
+</a>
+<!-- Dashboard 2: FTCF Main -->
+<a href="https://ftcfdashboard.netlify.app" target="_blank" class="glass p-5 flex
+items-center justify-between hover:bg-blue-500/10 transition-all border-l-4 border-blue-500
+group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center
+text-blue-600"><i class="fas fa-th-large text-xl"></i></div>
+<div>
+<p class="font-black text-sm uppercase">FTCF Dashboard</p>
+<p class="text-[9px] opacity-60">Main Management System</p>
+</div>
+</div>
+<i class="fas fa-external-link-alt text-xs opacity-30"></i>
+</a>
+</div>
+</div>
+<!-- Members Grid Section -->
+<section class="space-y-4 pt-2">
+<h2 class="text-lg font-black uppercase tracking-tight border-b border-slate-200
+dark:border-slate-700 pb-2 flex justify-between items-center">
+<span>Trust Members</span> <span id="member-count" class="text-[10px] bg-slate-800 text-white px-2 py-1
+rounded italic uppercase">Syncing...</span>
+</h2>
+<div id="members-list" class="grid grid-cols-3 md:grid-cols-4 gap-3">
+<!-- Data will be injected here -->
+</div>
+</section>
+<!-- Official Footer Info -->
+<div class="glass p-5 border-l-4 border-amber-600 text-[10px] space-y-1 bg-white/50
+dark:bg-slate-800/50">
+<p><strong>ACCOUNT TITLE:</strong> MUGHAL BROTHERS TRUST</p>
+<p><strong>BANK:</strong> MEEZAN BANK LIMITED</p>
+<p><strong>MOTTO:</strong> AMANAT ME KHIYANT NAHI, BEHTREEN NIZAM HE
+HAMARI KAMYABI</p>
+</div>
+</main>
+<script>
+// Updated CSV Link from Google Sheets
+const csvUrl =
+'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtsZyNI2Ss1ACTIO7X1zAND4Q-mGhFdK
+SVcvx8amNxfGsFQfA2A7kBLHJgTJ9DGECqNNZ40iHW7zDc/pub?output=csv';
+function loadData() {
+Papa.parse(csvUrl, {
+download: true,
+header: true,
+dynamicTyping: true,
+skipEmptyLines: true,
+complete: function(results) {
+let members = results.data.filter(m => m.name);
+if (members.length === 0) {
+console.error("No data found in CSV");
+return;
+}
+// Update Member Count Display
+document.getElementById('member-count').innerText = members.length + "
+Members";
+// 1. Calculate Total Balance
+let grandTotal = 0; members.forEach(m => { grandTotal += (m.fund || 0); });
+document.getElementById('grand-total').innerText = "Rs. " +
+grandTotal.toLocaleString('en-IN');
+// 2. Auto-Sort for Top Contributor
+let sorted = [...members].sort((a, b) => (b.fund || 0) - (a.fund || 0));
+let top = sorted[0];
+document.getElementById('top-name').innerText = top.name;
+document.getElementById('top-fund').innerText = "Rs. " + (top.fund ||
+0).toLocaleString('en-IN');
+document.getElementById('top-img').src = top.photo ||
+`https://ui-avatars.com/api/?name=${top.name}&background=c7a343&color=fff`;
+// 3. Render Member Cards
+const list = document.getElementById('members-list');
+list.innerHTML = '';
+members.forEach(m => {
+const profilePic = m.photo ||
+`https://ui-avatars.com/api/?name=${m.name}&background=random`;
+list.innerHTML += `
+<div class="glass p-3 text-center transition active:scale-95 border-b-2
+border-transparent hover:border-amber-500/40">
+<img src="${profilePic}" class="w-12 h-12 rounded-xl mx-auto mb-2
+object-cover shadow-sm bg-slate-200"
+onerror="this.src='https://ui-avatars.com/api/?name=${m.name}'">
+<p class="text-[9px] font-black uppercase truncate
+tracking-tight">${m.name}</p>
+<p class="text-[10px] font-black text-green-600 dark:text-green-400 mt-1
+italic">Rs. ${(m.fund || 0).toLocaleString('en-IN')}</p>
+</div>
+`;
+});
+},
+error: function(err) {
+alert("Google Sheet connection failed. Please check Publish settings.");
+}
+});
+}
+// PWA App Installation Logic
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+e.preventDefault(); deferredPrompt = e;
+document.getElementById('install-banner').style.display = 'flex';
+});
+document.getElementById('install-btn').addEventListener('click', () => {
+if (deferredPrompt) {
+deferredPrompt.prompt();
+deferredPrompt.userChoice.then(() => {
+document.getElementById('install-banner').style.display = 'none';
+});
+}
+});
+// Typing Animation
+const mottoText = "Amanat me khiyant Nahi, Behtreen Nizam he Hamari Kamyabi";
+let charIdx = 0;
+function typeMotto() {
+if (charIdx < mottoText.length) {
+document.getElementById("motto").innerHTML += mottoText.charAt(charIdx);
+charIdx++;
+setTimeout(typeMotto, 70);
+}
+}
+window.onload = () => {
+typeMotto();
+loadData();
+};
+</script>
+</body>
+</html>
