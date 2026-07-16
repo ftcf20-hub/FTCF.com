@@ -11,7 +11,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f2f5; }
         .card-glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .atm-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; border-radius: 20px; padding: 20px; position: relative; overflow: hidden; }
+        .atm-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; border-radius: 20px; padding: 20px; position: relative; }
     </style>
 </head>
 <body class="pb-10">
@@ -62,10 +62,18 @@
                 document.getElementById('grand-total').innerText = "Rs. " + grandTotal.toLocaleString();
 
                 const list = document.getElementById('members-list');
+                list.innerHTML = '';
+                
                 members.forEach(m => {
+                    // Yahan logic set hai: Agar photo ka link hai to wo use karega, warna naam ka avatar bana lega
+                    const profilePic = (m.photo && m.photo.length > 5) 
+                        ? m.photo 
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=random&color=fff`;
+
                     list.innerHTML += `
-                        <div class="card-glass p-3 rounded-xl text-center shadow-sm">
-                            <p class="text-[10px] font-bold truncate">${m.name}</p>
+                        <div class="card-glass p-3 rounded-xl text-center shadow-sm flex flex-col items-center">
+                            <img src="${profilePic}" class="w-12 h-12 rounded-full mb-2 object-cover border-2 border-slate-200" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}'">
+                            <p class="text-[10px] font-bold truncate w-full">${m.name}</p>
                             <p class="text-[11px] font-black text-emerald-600">Rs. ${m.fund.toLocaleString()}</p>
                         </div>
                     `;
