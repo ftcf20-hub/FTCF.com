@@ -3,55 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FTCF |FTCF Member Ledger  </title>
+    <title>FTCF | Member Ledger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f2f5; }
-        .dark { background: #0b0e14; color: white; }
-        .card-glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .dark .card-glass { background: rgba(20, 25, 35, 0.8); border: 1px solid rgba(255,255,255,0.05); }
-        .gradient-text { background: linear-gradient(135deg, #c7a343 0%, #f1c40f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-glow:hover { box-shadow: 0 0 20px rgba(199, 163, 67, 0.4); }
+        .card-glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .atm-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; border-radius: 20px; padding: 20px; position: relative; overflow: hidden; }
     </style>
 </head>
-<body class="transition-colors duration-500">
+<body class="pb-10">
 
-    <header class="p-8 pb-20 bg-slate-900 text-white rounded-b-[3rem] shadow-2xl">
-        <div class="flex justify-between items-center mb-6">
-            <span class="text-[10px] font-bold tracking-[0.2em] opacity-60 uppercase">FTCF System</span>
-            <button onclick="document.documentElement.classList.toggle('dark')" class="p-2 bg-white/10 rounded-full"><i class="fas fa-moon"></i></button>
-        </div>
-        <h1 class="text-3xl font-extrabold tracking-tight">Family Trust</h1>
-        <p class="text-amber-500 font-bold mt-1 text-sm italic">"Behtreen Nizam, Asal Kamyabi"</p>
+    <header class="p-8 pb-20 bg-slate-900 text-white rounded-b-[3rem] shadow-2xl text-center">
+        <h1 class="text-2xl font-black uppercase tracking-tight">FTCF Member Ledger</h1>
+        <p class="text-amber-500 font-bold mt-1 text-sm italic">"Amanat me khiyant nahi"</p>
     </header>
 
     <main class="max-w-xl mx-auto px-4 -mt-12 space-y-6">
-        <div class="card-glass p-8 rounded-3xl text-center">
-            <p class="text-[10px] font-bold uppercase opacity-50 tracking-widest">Available Balance</p>
-            <h2 id="grand-total" class="text-5xl font-extrabold mt-2 tracking-tight text-slate-900 dark:text-white">Rs. 0</h2>
-            <div class="flex justify-center gap-2 mt-6">
-                <div class="px-4 py-1 bg-green-500/10 text-green-600 rounded-full text-[10px] font-bold">LIVE SYNC</div>
-                <div id="member-count" class="px-4 py-1 bg-slate-500/10 rounded-full text-[10px] font-bold">Syncing...</div>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-4 card-glass p-4 rounded-2xl">
-            <img id="top-img" src="" class="w-16 h-16 rounded-full border-4 border-amber-400">
-            <div>
-                <p class="text-[9px] font-black uppercase text-amber-500 tracking-widest">Top Contributor</p>
-                <h3 id="top-name" class="font-bold text-lg">Loading...</h3>
-                <p id="top-fund" class="text-xs opacity-70">Rs. 0</p>
-            </div>
+        <div class="card-glass p-8 rounded-3xl text-center shadow-lg">
+            <p class="text-[10px] font-bold uppercase opacity-50 tracking-widest">Total Fund Balance</p>
+            <h2 id="grand-total" class="text-4xl font-extrabold mt-2 text-slate-900">Rs. 0</h2>
         </div>
 
         <section>
-            <h3 class="text-xs font-bold uppercase opacity-50 mb-4 ml-1">Members Directory</h3>
-            <div id="members-list" class="grid grid-cols-2 gap-4">
+            <h3 class="text-xs font-bold uppercase opacity-50 mb-3 ml-1">Members List</h3>
+            <div id="members-list" class="grid grid-cols-2 gap-3 max-h-[350px] overflow-y-auto p-2 border-t border-slate-200">
                 </div>
         </section>
+
+        <div class="atm-card shadow-2xl">
+            <div class="flex justify-between items-start mb-6">
+                <i class="fas fa-sim-card text-2xl text-amber-500"></i>
+                <span class="font-bold tracking-widest text-xs opacity-70">HBL KONNECT</span>
+            </div>
+            <div class="space-y-1">
+                <p class="text-[10px] uppercase opacity-60">Account Title</p>
+                <p class="font-bold text-lg">Afzaal Ahmed</p>
+                <p class="text-[10px] uppercase opacity-60 mt-2">Account Number</p>
+                <p class="font-mono text-xl tracking-wider">0342-2735966</p>
+            </div>
+        </div>
+
+        <div class="text-center opacity-50 text-[10px] font-bold uppercase tracking-widest">
+            @FTCF2026 Founder Mughal Brothers
+        </div>
     </main>
 
     <script>
@@ -61,23 +58,15 @@
             download: true, header: true, dynamicTyping: true,
             complete: function(results) {
                 const members = results.data.filter(m => m.name);
-                document.getElementById('member-count').innerText = members.length + " MEMBERS";
-                
                 let grandTotal = members.reduce((sum, m) => sum + (m.fund || 0), 0);
                 document.getElementById('grand-total').innerText = "Rs. " + grandTotal.toLocaleString();
-
-                const sorted = [...members].sort((a,b) => (b.fund||0) - (a.fund||0));
-                document.getElementById('top-name').innerText = sorted[0].name;
-                document.getElementById('top-fund').innerText = "Rs. " + sorted[0].fund.toLocaleString();
-                document.getElementById('top-img').src = sorted[0].photo || `https://ui-avatars.com/api/?name=${sorted[0].name}`;
 
                 const list = document.getElementById('members-list');
                 members.forEach(m => {
                     list.innerHTML += `
-                        <div class="card-glass p-4 rounded-2xl text-center hover:scale-105 transition-transform cursor-pointer">
-                            <img src="${m.photo || 'https://ui-avatars.com/api/?name='+m.name}" class="w-12 h-12 rounded-full mx-auto mb-2 border-2 border-slate-200">
+                        <div class="card-glass p-3 rounded-xl text-center shadow-sm">
                             <p class="text-[10px] font-bold truncate">${m.name}</p>
-                            <p class="text-[12px] font-black text-emerald-600">Rs. ${m.fund.toLocaleString()}</p>
+                            <p class="text-[11px] font-black text-emerald-600">Rs. ${m.fund.toLocaleString()}</p>
                         </div>
                     `;
                 });
