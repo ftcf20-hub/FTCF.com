@@ -33,7 +33,6 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
         }
 
-        /* Custom Scrollbar for better UX */
         #members-list::-webkit-scrollbar { width: 4px; }
         #members-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
@@ -46,13 +45,11 @@
     </header>
 
     <main class="max-w-xl mx-auto px-4 -mt-16 space-y-6">
-        <!-- Balance Card -->
         <div class="card-glass p-8 rounded-3xl text-center shadow-sm">
             <p class="text-[11px] font-bold uppercase tracking-[0.2em] opacity-40">Total Fund Balance</p>
             <h2 id="grand-total" class="text-4xl font-extrabold mt-3 text-slate-900 tracking-tight">Rs. 0</h2>
         </div>
 
-        <!-- Members Section -->
         <section>
             <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 mb-3 ml-1 text-slate-500">Members List</h3>
             <div id="members-list" class="grid grid-cols-2 gap-4 max-h-[350px] overflow-y-auto p-1">
@@ -60,7 +57,6 @@
             </div>
         </section>
 
-        <!-- ATM Card -->
         <div class="atm-card mt-2">
             <div class="flex justify-between items-start mb-8">
                 <i class="fas fa-sim-card text-2xl text-amber-500"></i>
@@ -95,13 +91,20 @@
                 members.forEach(m => {
                     const profilePic = (m.photo && m.photo.length > 5) 
                         ? m.photo 
-                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=1e293b&color=fff`;
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=f1f5f9&color=64748b&bold=true`;
 
                     list.innerHTML += `
-                        <div class="card-glass p-4 rounded-2xl text-center shadow-sm flex flex-col items-center">
-                            <img src="${profilePic}" class="w-14 h-14 rounded-full mb-3 object-cover border-4 border-slate-50 shadow-inner" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}'">
-                            <p class="text-[11px] font-semibold text-slate-700 truncate w-full">${m.name}</p>
-                            <p class="text-[12px] font-black text-emerald-600 mt-1">Rs. ${m.fund.toLocaleString()}</p>
+                        <div class="card-glass p-4 rounded-3xl border border-slate-100 flex flex-col items-center gap-2 transition-all duration-300 hover:shadow-xl hover:border-slate-200">
+                            <div class="relative">
+                                <img src="${profilePic}" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}'">
+                                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white"></div>
+                            </div>
+                            <div class="text-center w-full mt-1">
+                                <p class="text-[11px] font-bold text-slate-800 uppercase tracking-wide truncate w-full">${m.name}</p>
+                                <div class="bg-emerald-50 py-1 px-3 rounded-full mt-2 inline-block">
+                                    <p class="text-[11px] font-black text-emerald-700 tracking-tight">Rs. ${m.fund.toLocaleString()}</p>
+                                </div>
+                            </div>
                         </div>
                     `;
                 });
