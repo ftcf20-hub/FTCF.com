@@ -8,45 +8,73 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f2f5; }
-        .card-glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .atm-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; border-radius: 20px; padding: 20px; position: relative; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #f8fafc; 
+        }
+        
+        .card-glass { 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(0, 0, 0, 0.05); 
+            transition: transform 0.2s ease;
+        }
+
+        .card-glass:hover { transform: translateY(-2px); }
+
+        .atm-card { 
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); 
+            color: white; 
+            border-radius: 24px; 
+            padding: 24px; 
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Custom Scrollbar for better UX */
+        #members-list::-webkit-scrollbar { width: 4px; }
+        #members-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="pb-10">
 
-    <header class="p-8 pb-20 bg-slate-900 text-white rounded-b-[3rem] shadow-2xl text-center">
-        <h1 class="text-2xl font-black uppercase tracking-tight">FTCF Member Ledger</h1>
-        <p class="text-amber-500 font-bold mt-1 text-sm italic">"Amanat me khiyant nahi"</p>
+    <header class="p-8 pb-24 bg-slate-900 text-white rounded-b-[2.5rem] shadow-xl text-center">
+        <h1 class="text-2xl font-extrabold tracking-tight">FTCF Member Ledger</h1>
+        <p class="text-amber-400 font-medium mt-1 text-sm tracking-wide opacity-90">"Amanat me khiyanat nahi"</p>
     </header>
 
-    <main class="max-w-xl mx-auto px-4 -mt-12 space-y-6">
-        <div class="card-glass p-8 rounded-3xl text-center shadow-lg">
-            <p class="text-[10px] font-bold uppercase opacity-50 tracking-widest">Total Fund Balance</p>
-            <h2 id="grand-total" class="text-4xl font-extrabold mt-2 text-slate-900">Rs. 0</h2>
+    <main class="max-w-xl mx-auto px-4 -mt-16 space-y-6">
+        <!-- Balance Card -->
+        <div class="card-glass p-8 rounded-3xl text-center shadow-sm">
+            <p class="text-[11px] font-bold uppercase tracking-[0.2em] opacity-40">Total Fund Balance</p>
+            <h2 id="grand-total" class="text-4xl font-extrabold mt-3 text-slate-900 tracking-tight">Rs. 0</h2>
         </div>
 
+        <!-- Members Section -->
         <section>
-            <h3 class="text-xs font-bold uppercase opacity-50 mb-3 ml-1">Members List</h3>
-            <div id="members-list" class="grid grid-cols-2 gap-3 max-h-[350px] overflow-y-auto p-2 border-t border-slate-200">
-                </div>
+            <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 mb-3 ml-1 text-slate-500">Members List</h3>
+            <div id="members-list" class="grid grid-cols-2 gap-4 max-h-[350px] overflow-y-auto p-1">
+                <!-- Data will inject here -->
+            </div>
         </section>
 
-        <div class="atm-card shadow-2xl">
-            <div class="flex justify-between items-start mb-6">
+        <!-- ATM Card -->
+        <div class="atm-card mt-2">
+            <div class="flex justify-between items-start mb-8">
                 <i class="fas fa-sim-card text-2xl text-amber-500"></i>
-                <span class="font-bold tracking-widest text-xs opacity-70">HBL KONNECT</span>
+                <span class="font-bold tracking-widest text-[10px] opacity-60">HBL KONNECT</span>
             </div>
             <div class="space-y-1">
-                <p class="text-[10px] uppercase opacity-60">Account Title</p>
-                <p class="font-bold text-lg">Afzaal Ahmed</p>
-                <p class="text-[10px] uppercase opacity-60 mt-2">Account Number</p>
-                <p class="font-mono text-xl tracking-wider">0342-2735966</p>
+                <p class="text-[10px] uppercase tracking-widest opacity-50">Account Title</p>
+                <p class="font-semibold text-lg">Afzaal Ahmed</p>
+                <p class="text-[10px] uppercase tracking-widest opacity-50 mt-4">Account Number</p>
+                <p class="font-mono text-xl tracking-wider font-medium">0342-2735966</p>
             </div>
         </div>
 
-        <div class="text-center opacity-50 text-[10px] font-bold uppercase tracking-widest">
+        <div class="text-center opacity-30 text-[9px] font-bold uppercase tracking-[0.2em] mt-8">
             @FTCF2026 Founder Mughal Brothers
         </div>
     </main>
@@ -65,16 +93,15 @@
                 list.innerHTML = '';
                 
                 members.forEach(m => {
-                    // Yahan logic set hai: Agar photo ka link hai to wo use karega, warna naam ka avatar bana lega
                     const profilePic = (m.photo && m.photo.length > 5) 
                         ? m.photo 
-                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=random&color=fff`;
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=1e293b&color=fff`;
 
                     list.innerHTML += `
-                        <div class="card-glass p-3 rounded-xl text-center shadow-sm flex flex-col items-center">
-                            <img src="${profilePic}" class="w-12 h-12 rounded-full mb-2 object-cover border-2 border-slate-200" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}'">
-                            <p class="text-[10px] font-bold truncate w-full">${m.name}</p>
-                            <p class="text-[11px] font-black text-emerald-600">Rs. ${m.fund.toLocaleString()}</p>
+                        <div class="card-glass p-4 rounded-2xl text-center shadow-sm flex flex-col items-center">
+                            <img src="${profilePic}" class="w-14 h-14 rounded-full mb-3 object-cover border-4 border-slate-50 shadow-inner" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}'">
+                            <p class="text-[11px] font-semibold text-slate-700 truncate w-full">${m.name}</p>
+                            <p class="text-[12px] font-black text-emerald-600 mt-1">Rs. ${m.fund.toLocaleString()}</p>
                         </div>
                     `;
                 });
