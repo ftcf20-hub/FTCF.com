@@ -12,87 +12,71 @@
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #fcfcfc; 
+            background: #f8fafc; 
         }
         
-        /* Minimalist Glassmorphism */
         .card-glass { 
-            background: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(0, 0, 0, 0.03); 
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(0, 0, 0, 0.04); 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
-        .card-glass:hover { 
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px); 
+        /* Luxury Green Total Card */
+        .total-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #dcfce7 100%);
+            border: 1px solid rgba(16, 185, 129, 0.1);
         }
 
-        /* Luxury ATM Card */
         .atm-card { 
-            background: #0f172a; 
-            color: #f8fafc; 
-            border-radius: 28px; 
-            padding: 32px; 
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); 
+            color: white; 
+            border-radius: 24px; 
+            padding: 24px; 
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.3);
-        }
-        
-        .atm-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
         #members-list::-webkit-scrollbar { width: 4px; }
-        #members-list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        #members-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="pb-10">
 
-    <header class="p-8 pb-24 bg-slate-900 text-white rounded-b-[3rem] shadow-2xl text-center">
+    <header class="p-8 pb-24 bg-slate-900 text-white rounded-b-[2.5rem] shadow-xl text-center">
         <h1 class="text-2xl font-extrabold tracking-tight">Family Trust & Care Foundation</h1>
-        <p class="text-amber-400/80 font-medium mt-1 text-[11px] uppercase tracking-[0.2em]">Amanat me khiyanat nahi</p>
+        <p class="text-amber-400 font-medium mt-1 text-sm tracking-wide opacity-90">"Amanat me khiyanat nahi,Behtreen Nizam Asal Kamyabi"</p>
     </header>
 
-    <main class="max-w-xl mx-auto px-4 -mt-16 space-y-8">
-        <div class="card-glass p-8 rounded-[2rem] text-center">
-            <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400 mb-2">Total Contribution</p>
-            <h2 id="grand-total" class="text-5xl font-extrabold text-slate-900 tracking-tighter">Rs. 0</h2>
+    <main class="max-w-xl mx-auto px-4 -mt-16 space-y-6">
+        <!-- Compact Green Total Card -->
+        <div class="total-card p-6 rounded-3xl text-center shadow-sm">
+            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 opacity-70">Total Contribution</p>
+            <h2 id="grand-total" class="text-3xl font-extrabold mt-2 text-emerald-900 tracking-tight">Rs. 0</h2>
         </div>
 
         <section>
-            <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-4 ml-1">Member Ledger</h3>
-            <div id="members-list" class="grid grid-cols-2 gap-4 max-h-[350px] overflow-y-auto p-1">
+            <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 mb-3 ml-1 text-slate-500">Members List</h3>
+            <div id="members-list" class="grid grid-cols-2 gap-3 max-h-[350px] overflow-y-auto p-1">
                 <!-- Data will inject here -->
             </div>
         </section>
 
-        <div class="atm-card">
-            <div class="flex justify-between items-start mb-10">
-                <div class="w-10 h-7 bg-amber-400/20 rounded-md border border-amber-400/30 flex items-center justify-center">
-                    <i class="fas fa-sim-card text-amber-400/60"></i>
-                </div>
-                <span class="font-bold tracking-[0.2em] text-[9px] opacity-40">HBL KONNECT</span>
+        <div class="atm-card mt-2">
+            <div class="flex justify-between items-start mb-8">
+                <i class="fas fa-sim-card text-2xl text-amber-500"></i>
+                <span class="font-bold tracking-widest text-[10px] opacity-60">HBL KONNECT</span>
             </div>
             <div class="space-y-1">
-                <p class="text-[9px] uppercase tracking-[0.2em] opacity-40">Account Title</p>
+                <p class="text-[10px] uppercase tracking-widest opacity-50">Account Title</p>
                 <p class="font-semibold text-lg">Afzaal Ahmed</p>
-                <p class="text-[9px] uppercase tracking-[0.2em] opacity-40 mt-5">Account Number</p>
-                <p class="font-mono text-xl tracking-widest font-light">0342-2735966</p>
+                <p class="text-[10px] uppercase tracking-widest opacity-50 mt-4">Account Number</p>
+                <p class="font-mono text-xl tracking-wider font-medium">0342-2735966</p>
             </div>
         </div>
 
-        <div class="text-center opacity-20 text-[9px] font-bold uppercase tracking-[0.2em] mt-8">
-            &copy; FTCF 2026 | Mughal Brothers
+        <div class="text-center opacity-30 text-[9px] font-bold uppercase tracking-[0.2em] mt-8">
+            @FTCF2026 Founder Mughal Brothers
         </div>
     </main>
 
@@ -115,14 +99,11 @@
                         : `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=f1f5f9&color=64748b&bold=true`;
 
                     list.innerHTML += `
-                        <div class="card-glass p-5 rounded-[2rem] flex flex-col items-center gap-3">
-                            <div class="relative">
-                                <img src="${profilePic}" class="w-14 h-14 rounded-2xl object-cover shadow-inner" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}'">
-                                <div class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white"></div>
-                            </div>
-                            <div class="text-center w-full">
-                                <p class="text-[10px] font-bold text-slate-700 uppercase tracking-wide truncate w-full">${m.name}</p>
-                                <p class="text-[11px] font-black text-slate-900 mt-1">Rs. ${m.fund.toLocaleString()}</p>
+                        <div class="card-glass p-3 rounded-2xl border border-white/50 flex items-center gap-3 transition-all duration-300 hover:shadow-md hover:border-emerald-100">
+                            <img src="${profilePic}" class="w-10 h-10 rounded-full object-cover border border-slate-100" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}'">
+                            <div class="overflow-hidden">
+                                <p class="text-[10px] font-bold text-slate-800 uppercase tracking-wide truncate">${m.name}</p>
+                                <p class="text-[10px] font-black text-emerald-600">Rs. ${m.fund.toLocaleString()}</p>
                             </div>
                         </div>
                     `;
