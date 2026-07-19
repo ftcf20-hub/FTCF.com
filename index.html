@@ -38,12 +38,13 @@
 
         <!-- History Modal -->
         <div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
-            <div class="bg-white p-6 rounded-3xl w-full max-w-sm">
+            <div class="bg-white p-6 rounded-3xl w-full max-w-sm max-h-[80vh] flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <h3 id="modal-name" class="font-bold text-slate-900"></h3>
                     <button onclick="document.getElementById('modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-900"><i class="fas fa-times"></i></button>
                 </div>
-                <div id="history-data" class="space-y-2"></div>
+                <!-- Scrollable area inside modal -->
+                <div id="history-data" class="space-y-2 overflow-y-auto pr-2"></div>
             </div>
         </div>
 
@@ -97,19 +98,27 @@
         });
 
         function showHistory(name) {
-            const memberHistory = historyData.filter(row => row.name && row.name.trim() === name.trim());
+            const memberHistory = historyData.filter(row => {
+                const rowName = Object.values(row).find(v => v && v.toString().trim() === name.trim());
+                return rowName;
+            });
+            
             const container = document.getElementById('history-data');
             document.getElementById('modal-name').innerText = name + "'s Record";
             
             if(memberHistory.length > 0) {
-                container.innerHTML = memberHistory.map(row => `
-                    <div class="flex justify-between text-xs border-b pb-1">
-                        <span>${row.month || 'N/A'}</span>
-                        <span class="font-bold">Rs. ${row.amount ? parseInt(row.amount).toLocaleString() : 0}</span>
-                    </div>
-                `).join('');
+                container.innerHTML = memberHistory.map(row => {
+                    const monthKey = Object.keys(row).find(k => k.toLowerCase() === 'month');
+                    const amountKey = Object.keys(row).find(k => k.toLowerCase() === 'amount');
+                    return `
+                        <div class="flex justify-between text-xs border-b pb-1">
+                            <span>${row[monthKey] || 'N/A'}</span>
+                            <span class="font-bold">Rs. ${row[amountKey] ? parseInt(row[amountKey]).toLocaleString() : 0}</span>
+                        </div>
+                    `;
+                }).join('');
             } else {
-                container.innerHTML = '<p class="text-xs text-center text-slate-400">No records found yet.</p>';
+                container.innerHTML = '<p class="text-xs text-center text-slate-400">No records found.</p>';
             }
             document.getElementById('modal').classList.remove('hidden');
         }
