@@ -43,7 +43,6 @@
                     <h3 id="modal-name" class="font-bold text-slate-900"></h3>
                     <button onclick="document.getElementById('modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-900"><i class="fas fa-times"></i></button>
                 </div>
-                <!-- Scrollable area inside modal -->
                 <div id="history-data" class="space-y-2 overflow-y-auto pr-2"></div>
             </div>
         </div>
@@ -99,8 +98,8 @@
 
         function showHistory(name) {
             const memberHistory = historyData.filter(row => {
-                const rowName = Object.values(row).find(v => v && v.toString().trim() === name.trim());
-                return rowName;
+                const values = Object.values(row);
+                return values[0] && values[0].toString().trim() === name.trim();
             });
             
             const container = document.getElementById('history-data');
@@ -108,12 +107,11 @@
             
             if(memberHistory.length > 0) {
                 container.innerHTML = memberHistory.map(row => {
-                    const monthKey = Object.keys(row).find(k => k.toLowerCase() === 'month');
-                    const amountKey = Object.keys(row).find(k => k.toLowerCase() === 'amount');
+                    const values = Object.values(row);
                     return `
                         <div class="flex justify-between text-xs border-b pb-1">
-                            <span>${row[monthKey] || 'N/A'}</span>
-                            <span class="font-bold">Rs. ${row[amountKey] ? parseInt(row[amountKey]).toLocaleString() : 0}</span>
+                            <span>${values[1] || 'N/A'}</span>
+                            <span class="font-bold">Rs. ${values[2] ? parseInt(values[2]).toLocaleString() : 0}</span>
                         </div>
                     `;
                 }).join('');
