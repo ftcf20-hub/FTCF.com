@@ -97,15 +97,20 @@
         });
 
         function showHistory(name) {
-            const memberHistory = historyData.filter(row => row.name === name);
+            const memberHistory = historyData.filter(row => row.name && row.name.trim() === name.trim());
             const container = document.getElementById('history-data');
             document.getElementById('modal-name').innerText = name + "'s Record";
-            container.innerHTML = memberHistory.map(row => `
-                <div class="flex justify-between text-xs border-b pb-1">
-                    <span>${row.month || 'N/A'}</span>
-                    <span class="font-bold">Rs. ${row.amount?.toLocaleString() || 0}</span>
-                </div>
-            `).join('');
+            
+            if(memberHistory.length > 0) {
+                container.innerHTML = memberHistory.map(row => `
+                    <div class="flex justify-between text-xs border-b pb-1">
+                        <span>${row.month || 'N/A'}</span>
+                        <span class="font-bold">Rs. ${row.amount ? parseInt(row.amount).toLocaleString() : 0}</span>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p class="text-xs text-center text-slate-400">No records found yet.</p>';
+            }
             document.getElementById('modal').classList.remove('hidden');
         }
     </script>
