@@ -2,67 +2,244 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FTCF | Member Ledger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; }
-        .card-glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(0, 0, 0, 0.04); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .total-card { background: linear-gradient(135deg, #ecfdf5 0%, #dcfce7 100%); border: 1px solid rgba(16, 185, 129, 0.1); }
-        .notice-card { background: linear-gradient(145deg, #fef3c7 0%, #fde68a 100%); color: #78350f; border-radius: 24px; padding: 24px; position: relative; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); }
-        .scroll-container { background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f1f5f9; 
+            color: #0f172a;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.8s ease;
+        }
+
+        /* Weather Theme Dynamic Transitions (Light Accents) */
+        .theme-sunny {
+            background-color: #fef3c7 !important;
+        }
+        .theme-sunny .ambient-glow-1 {
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, rgba(255,255,255,0) 70%) !important;
+        }
+
+        .theme-rainy {
+            background-color: #e0f2fe !important;
+        }
+        .theme-rainy .ambient-glow-1 {
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(255,255,255,0) 70%) !important;
+        }
+
+        /* Ambient Lighting Mesh Glows */
+        .ambient-glow-1 {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+            z-index: 0;
+            transition: all 0.8s ease;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            top: 250px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Modern Soft Light Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+        }
+
+        /* Glowing Total Card (Light Emerald) */
+        .total-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.15);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.8s ease;
+        }
+
+        .total-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.5), transparent);
+        }
+
+        /* Notice Card Light Amber */
+        .notice-card {
+            background: linear-gradient(145deg, #fef3c7 0%, #fde68a 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.1);
+        }
+
+        .notice-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: #d97706;
+        }
+
+        /* Custom Scrollbar */
+        .scroll-container {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
         #members-list::-webkit-scrollbar { width: 4px; }
-        #members-list::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        #members-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* Card Interactive Hover Effects */
+        .member-item {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        }
+
+        .member-item:hover {
+            transform: translateY(-2px) scale(1.01);
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 12px 20px -5px rgba(15, 23, 42, 0.08), 0 0 12px rgba(16, 185, 129, 0.15);
+            background: #ffffff;
+        }
+
+        /* Pulse Dot Animation */
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #059669;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #059669;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(5, 150, 105, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+        }
     </style>
 </head>
-<body class="pb-10">
+<body class="pb-8 relative antialiased selection:bg-emerald-100">
 
-    <header class="p-8 pb-24 bg-slate-900 text-white rounded-b-[2.5rem] shadow-xl text-center">
-        <h1 class="text-2xl font-extrabold tracking-tight">Family Trust & Care Foundation</h1>
-        <p class="text-amber-400 font-medium mt-1 text-sm tracking-wide opacity-90">"Amanat me khiyanat nahi,Behtreen Nizam Asal Kamyabi"</p>
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <header class="p-6 sm:p-8 pb-16 sm:pb-20 bg-slate-900 text-white rounded-b-[2rem] sm:rounded-b-[2.5rem] shadow-xl text-center relative z-10">
+        <div class="inline-flex items-center gap-2 mb-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-[10px] font-medium tracking-widest text-slate-300 uppercase">
+            <span class="pulse-dot"></span> <span id="weather-status">Live Portal</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white leading-tight">
+            Family Trust & Care Foundation
+        </h1>
+        <p class="inline-block mt-3 px-3.5 py-1.5 rounded-full text-amber-300 font-medium text-[11px] sm:text-xs tracking-wide bg-amber-500/10 border border-amber-400/20 backdrop-blur-xl max-w-[90%]">
+            "Amanat me khiyanat nahi,Behtreen Nizam Asal Kamyabi"
+        </p>
     </header>
 
-    <main class="max-w-xl mx-auto px-4 -mt-16 space-y-6">
-        <div class="total-card p-6 rounded-3xl text-center shadow-sm">
-            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 opacity-70">Total Contribution</p>
-            <h2 id="grand-total" class="text-3xl font-extrabold mt-2 text-emerald-900 tracking-tight">Rs. 0</h2>
-            <p id="last-updated" class="text-[9px] font-bold uppercase tracking-[0.1em] text-emerald-800 opacity-50 mt-2"></p>
+    <main class="w-full max-w-md mx-auto px-4 -mt-8 sm:-mt-10 space-y-5 sm:space-y-6 relative z-20">
+        
+        <div class="total-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl text-center backdrop-blur-xl">
+            <div class="flex items-center justify-center gap-2">
+                <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-emerald-800 opacity-80">Total Contribution</p>
+            </div>
+            <h2 id="grand-total" class="text-3xl sm:text-4xl font-black mt-2 text-emerald-950 tracking-tight">Rs. 0</h2>
+            <p id="last-updated" class="text-[9px] font-bold uppercase tracking-[0.15em] text-emerald-700 opacity-75 mt-2"></p>
         </div>
 
         <section>
-            <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 mb-3 ml-1 text-slate-500">Members List</h3>
-            <div id="members-list" class="scroll-container grid grid-cols-2 gap-3 max-h-[350px] overflow-y-auto p-4 rounded-3xl shadow-inner"></div>
+            <div class="flex justify-between items-center mb-2.5 ml-1">
+                <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Members List</h3>
+                <span class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Tap for history</span>
+            </div>
+            <div id="members-list" class="scroll-container grid grid-cols-2 gap-2.5 sm:gap-3 max-h-[300px] sm:max-h-[360px] overflow-y-auto p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl backdrop-blur-xl"></div>
         </section>
 
         <!-- History Modal -->
-        <div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
-            <div class="bg-white p-6 rounded-3xl w-full max-w-sm max-h-[80vh] flex flex-col">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 id="modal-name" class="font-bold text-slate-900"></h3>
-                    <button onclick="triggerVibrate(20); document.getElementById('modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-900"><i class="fas fa-times"></i></button>
+        <div id="modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 transition-all duration-300">
+            <div class="glass-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl w-full max-w-xs sm:max-w-sm max-h-[75vh] flex flex-col border border-slate-200 shadow-2xl relative">
+                <div class="flex justify-between items-center mb-3 pb-2.5 border-b border-slate-200">
+                    <h3 id="modal-name" class="font-bold text-slate-900 text-xs sm:text-sm tracking-wide truncate pr-2"></h3>
+                    <button onclick="triggerVibrate(20); document.getElementById('modal').classList.add('hidden')" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 flex items-center justify-center shrink-0 transition-all hover:bg-slate-200">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
                 </div>
-                <div id="history-data" class="space-y-2 overflow-y-auto pr-2"></div>
+                <div id="history-data" class="space-y-2 overflow-y-auto pr-1"></div>
             </div>
         </div>
 
-        <div class="notice-card mt-2">
-            <div class="flex items-center gap-3 mb-3">
-                <i class="fas fa-bell text-amber-600"></i>
-                <h4 class="font-bold uppercase tracking-widest text-xs">Important Notice</h4>
+        <div class="notice-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl">
+            <div class="flex items-center gap-2 mb-1.5">
+                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/30 shrink-0">
+                    <i class="fas fa-bell text-amber-800 text-[9px] sm:text-[10px]"></i>
+                </div>
+                <h4 class="font-bold uppercase tracking-widest text-xs text-amber-900">Important Notice</h4>
             </div>
-            <p class="text-xs leading-relaxed opacity-90">
-                تمام بھائیوں سے گزارش ہے کہ ہر مہینے کی 10 تاریخ تک اپنی پیمنٹ جمع کروا دیا کریں، تاکہ نہ سسٹم میں رکاوٹ آئے اور نہ ہی آپ پر بوجھ بڑھے۔ شکریہ۔            </p>
+            <p class="text-xs leading-relaxed text-amber-950 opacity-90 font-medium dir-rtl text-right">
+                تمام بھائیوں سے گزارش ہے کہ ہر مہینے کی 10 تاریخ تک اپنی پیمنٹ جمع کروا دیا کریں، تاکہ نہ سسٹم میں رکاوٹ آئے اور نہ ہی آپ پر بوجھ بڑھے۔ شکریہ۔
+            </p>
         </div>
 
-        <div class="text-center opacity-30 text-[9px] font-bold uppercase tracking-[0.2em] mt-8">
+        <div class="text-center opacity-50 text-[9px] font-bold uppercase tracking-[0.25em] pt-2 text-slate-400">
             @FTCF2026 Founder Mughal Brothers
         </div>
     </main>
 
     <script>
+        // Automatic Weather Detection & Theme Switcher Mode
+        async function autoWeatherTheme() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    try {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                        const data = await res.json();
+                        
+                        const code = data.current_weather.weathercode;
+                        const weatherStatusEl = document.getElementById('weather-status');
+
+                        // Open-Meteo Weather Codes Mapping
+                        if (code === 0 || code === 1) {
+                            document.body.classList.add('theme-sunny');
+                            if (weatherStatusEl) weatherStatusEl.innerText = 'Sunny Mode';
+                        } else if ([51, 53, 55, 61, 63, 65, 80, 81].includes(code)) {
+                            document.body.classList.add('theme-rainy');
+                            if (weatherStatusEl) weatherStatusEl.innerText = 'Rainy Mode';
+                        } else {
+                            if (weatherStatusEl) weatherStatusEl.innerText = 'Live Portal';
+                        }
+                    } catch (e) {
+                        console.log('Weather sync bypassed');
+                    }
+                }, () => {});
+            }
+        }
+        autoWeatherTheme();
+
         // Haptic feedback function
         function triggerVibrate(ms) {
             if (window.navigator.vibrate) {
@@ -89,13 +266,13 @@
 
             const list = document.getElementById('members-list');
             main.forEach(m => {
-                const profilePic = m.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}`;
+                const profilePic = m.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=f1f5f9&color=0f172a`;
                 list.innerHTML += `
-                    <div onclick="triggerVibrate(30); showHistory('${m.name}')" class="bg-white border border-slate-100 p-3 rounded-2xl flex items-center gap-3 cursor-pointer shadow-[0_2px_10px_-3px_rgba(15,23,42,0.1)] transition-all duration-300 hover:bg-slate-900 group">
-                        <img src="${profilePic}" class="w-10 h-10 rounded-full object-cover">
-                        <div class="overflow-hidden">
-                            <p class="text-[10px] font-bold text-slate-800 uppercase tracking-wide truncate group-hover:text-white">${m.name}</p>
-                            <p class="text-[10px] font-black text-emerald-600 group-hover:text-emerald-400">Rs. ${m.fund.toLocaleString()}</p>
+                    <div onclick="triggerVibrate(30); showHistory('${m.name}')" class="member-item p-2.5 rounded-xl sm:rounded-2xl flex items-center gap-2.5 cursor-pointer group min-w-0">
+                        <img src="${profilePic}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover ring-2 ring-emerald-500/20 group-hover:ring-emerald-500 transition-all duration-300 shrink-0">
+                        <div class="overflow-hidden min-w-0">
+                            <p class="text-[10px] font-bold text-slate-800 uppercase tracking-wide truncate group-hover:text-emerald-700 transition-colors">${m.name}</p>
+                            <p class="text-[10px] font-black text-emerald-600 mt-0.5 truncate">Rs. ${m.fund.toLocaleString()}</p>
                         </div>
                     </div>
                 `;
@@ -115,14 +292,14 @@
                 container.innerHTML = memberHistory.map(row => {
                     const values = Object.values(row);
                     return `
-                        <div class="flex justify-between text-xs border-b pb-1">
-                            <span>${values[1] || 'N/A'}</span>
-                            <span class="font-bold">Rs. ${values[2] ? parseInt(values[2]).toLocaleString() : 0}</span>
+                        <div class="flex justify-between items-center text-xs border-b border-slate-100 pb-2 pt-1 text-slate-700">
+                            <span class="opacity-80 font-medium truncate pr-2">${values[1] || 'N/A'}</span>
+                            <span class="font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0">Rs. ${values[2] ? parseInt(values[2]).toLocaleString() : 0}</span>
                         </div>
                     `;
                 }).join('');
             } else {
-                container.innerHTML = '<p class="text-xs text-center text-slate-400">No records found.</p>';
+                container.innerHTML = '<p class="text-xs text-center text-slate-400 py-6">No records found.</p>';
             }
             document.getElementById('modal').classList.remove('hidden');
         }
