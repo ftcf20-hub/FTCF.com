@@ -145,9 +145,40 @@
             70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
         }
+
+        /* Toast Notification Styling */
+        #toast-notification {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 380px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(52, 211, 153, 0.4);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(16, 185, 129, 0.25);
+            border-radius: 1.25rem;
+            z-index: 100;
+            transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #toast-notification.show {
+            top: 20px;
+        }
     </style>
 </head>
 <body class="pb-8 relative antialiased selection:bg-emerald-900 selection:text-emerald-200">
+
+    <!-- Toast Notification Popup Banner -->
+    <div id="toast-notification" class="p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-400">
+            <i class="fas fa-bell text-base animate-bounce"></i>
+        </div>
+        <div class="overflow-hidden">
+            <p class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400">Latest Payment Update</p>
+            <p id="toast-message" class="text-xs font-bold text-slate-100 truncate mt-0.5">Loading last payment...</p>
+        </div>
+    </div>
 
     <div class="ambient-glow-1"></div>
     <div class="ambient-glow-2"></div>
@@ -186,7 +217,7 @@
             <div id="members-list" class="scroll-container space-y-3 max-h-[380px] sm:max-h-[440px] overflow-y-auto p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl backdrop-blur-xl"></div>
         </section>
 
-        !-- Member Profile Modal -->
+        <!-- Member Profile Modal -->
         <div id="modal" class="fixed inset-0 bg-black/75 backdrop-blur-md hidden flex items-center justify-center p-4 z-50 transition-all duration-300">
             <div class="glass-card p-5 sm:p-6 rounded-3xl w-full max-w-sm max-h-[90vh] flex flex-col border border-slate-700 shadow-2xl relative">
                 <!-- Close Button -->
@@ -223,7 +254,7 @@
             </div>
         </div>
 
-        <!-- Next-Level Executive Visiting Card Style ID Template -->
+           <!-- Next-Level Executive Visiting Card Style ID Template -->
         <div id="digital-id-card-template" style="position: absolute; left: -9999px; top: 0; width: 600px; background: linear-gradient(135deg, #050b14 0%, #0f172a 100%); border: 2px solid rgba(52, 211, 153, 0.5); border-radius: 20px; padding: 30px; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; box-shadow: 0 25px 50px rgba(0,0,0,0.9);">
             
             <!-- Header: Executive Foundation Title -->
@@ -355,7 +386,10 @@
             fetch(historySheet).then(res => res.text())
         ]).then(([mainCsv, historyCsv]) => {
             globalMainData = Papa.parse(mainCsv, {header: true, dynamicTyping: true}).data.filter(m => m.name);
-            historyData = Papa.parse(historyCsv, {header: true, dynamicTyping: true}).data;
+            historyData = Papa.parse(historyCsv, {header: true, dynamicTyping: true}).data.filter(row => {
+                const vals = Object.values(row);
+                return vals[0] && vals[2];
+            });
 
             grandTotalGlobal = globalMainData.reduce((sum, m) => sum + (m.fund || 0), 0);
             document.getElementById('grand-total').innerText = "Rs. " + grandTotalGlobal.toLocaleString();
@@ -369,6 +403,44 @@
                 }
             });
             availableMonths = monthsSet;
+
+            // Smart Memory System for Last Updated Member Payment
+            let lastMemberName = "Member";
+            let lastMonthName = "Current Month";
+            let lastPaidAmount = 0;
+
+            const savedLatest = localStorage.getItem('ftcf_latest_payment');
+            
+            if (historyData.length > 0) {
+                // By default use the very last row from sheet history as baseline
+                const latestRow = historyData[historyData.length - 1];
+                const vals = Object.values(latestRow);
+                lastMemberName = vals[0] || 'Member';
+                lastMonthName = vals[1] || 'Current Month';
+                lastPaidAmount = vals[2] ? parseInt(vals[2]) : 0;
+            }
+
+            // If a custom recent update was saved via app memory, prioritize that!
+            if (savedLatest) {
+                try {
+                    const parsed = JSON.parse(savedLatest);
+                    lastMemberName = parsed.name;
+                    lastMonthName = parsed.month;
+                    lastPaidAmount = parsed.amount;
+                } catch(e) {}
+            }
+
+            // Trigger Toast Notification after 5 seconds
+            setTimeout(() => {
+                triggerVibrate(60); 
+                const toast = document.getElementById('toast-notification');
+                document.getElementById('toast-message').innerText = `${lastMemberName} paid Rs. ${lastPaidAmount.toLocaleString()} (${lastMonthName})`;
+                toast.classList.add('show');
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }, 5000);
 
             const list = document.getElementById('members-list');
             globalMainData.forEach((m, idx) => {
@@ -427,6 +499,21 @@
             const container = document.getElementById('history-data');
             
             if(memberHistory.length > 0) {
+                // If user clicks a member, we can also record this as the actively viewed/updated member in memory if needed, 
+                // or you can explicitly update it when checking their latest history row:
+                const latestMemberPayment = memberHistory[memberHistory.length - 1];
+                const vals = Object.values(latestMemberPayment);
+                const memName = vals[0];
+                const memMonth = vals[1] || 'Current Month';
+                const memAmt = parseInt(vals[2]) || 0;
+
+                // Save to localStorage so notification shows this exact member's latest activity
+                localStorage.setItem('ftcf_latest_payment', JSON.stringify({
+                    name: memName,
+                    month: memMonth,
+                    amount: memAmt
+                }));
+
                 container.innerHTML = memberHistory.map(row => {
                     const values = Object.values(row);
                     return `
@@ -442,7 +529,7 @@
             document.getElementById('modal').classList.remove('hidden');
         }
 
-        function generateDigitalIDCard() {
+         function generateDigitalIDCard() {
             if(!currentActiveMember) return;
 
             const m = currentActiveMember;
