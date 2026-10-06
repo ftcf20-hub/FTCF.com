@@ -76,7 +76,6 @@
             background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.8), transparent);
         }
 
-        /* Next-Level Professional Button Styling */
         .btn-next-level {
             background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #2563eb 100%);
             background-size: 200% auto;
@@ -95,30 +94,13 @@
             transition: 0.5s;
         }
 
-        .btn-next-level:hover::before {
-            left: 100%;
-        }
+        .btn-next-level:hover::before { left: 100%; }
 
         .btn-next-level:hover {
             background-position: right center;
             transform: translateY(-2px);
             box-shadow: 0 15px 30px -5px rgba(5, 150, 105, 0.7), 0 0 20px rgba(37, 99, 235, 0.5);
             border-color: rgba(52, 211, 153, 0.8);
-        }
-
-        .notice-card {
-            background: linear-gradient(145deg, rgba(120, 53, 15, 0.4) 0%, rgba(30, 27, 75, 0.4) 100%);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-        }
-
-        .notice-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: #f59e0b;
         }
 
         .scroll-container {
@@ -201,19 +183,19 @@
                 <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Members Directory</h3>
                 <span class="text-[9px] font-semibold text-emerald-400/80 uppercase tracking-wider"><i class="fas fa-hand-pointer text-[8px] mr-1"></i>Tap for profile</span>
             </div>
-            <div id="members-list" class="scroll-container space-y-3 max-h-[340px] sm:max-h-[400px] overflow-y-auto p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl backdrop-blur-xl"></div>
+            <div id="members-list" class="scroll-container space-y-3 max-h-[380px] sm:max-h-[440px] overflow-y-auto p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl backdrop-blur-xl"></div>
         </section>
 
-        <!-- Member Profile Modal (Replaced old history popup) -->
+        !-- Member Profile Modal -->
         <div id="modal" class="fixed inset-0 bg-black/75 backdrop-blur-md hidden flex items-center justify-center p-4 z-50 transition-all duration-300">
-            <div class="glass-card p-5 sm:p-6 rounded-3xl w-full max-w-sm max-h-[85vh] flex flex-col border border-slate-700 shadow-2xl relative">
+            <div class="glass-card p-5 sm:p-6 rounded-3xl w-full max-w-sm max-h-[90vh] flex flex-col border border-slate-700 shadow-2xl relative">
                 <!-- Close Button -->
                 <button onclick="triggerVibrate(20); document.getElementById('modal').classList.add('hidden')" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center shrink-0 transition-all hover:bg-slate-700 z-10">
                     <i class="fas fa-times text-xs"></i>
                 </button>
 
                 <!-- Profile Header Info -->
-                <div class="text-center pb-4 border-b border-slate-800">
+                <div class="text-center pb-3 border-b border-slate-800">
                     <div class="relative w-20 h-20 mx-auto mb-3">
                         <img id="profile-modal-img" src="" class="w-20 h-20 rounded-2xl object-cover ring-2 ring-emerald-500/50 shadow-lg">
                         <span id="profile-modal-id" class="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[9px] font-black bg-slate-900 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -225,14 +207,50 @@
                 </div>
 
                 <!-- Profile Summary Fund Box -->
-                <div class="py-3 my-2 bg-slate-900/60 rounded-xl px-4 flex justify-between items-center border border-slate-800 shrink-0">
+                <div class="py-2.5 my-2 bg-slate-900/60 rounded-xl px-4 flex justify-between items-center border border-slate-800 shrink-0">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Fund</span>
                     <span id="profile-modal-fund" class="text-xs sm:text-sm font-black text-emerald-400">Rs. 0</span>
                 </div>
 
+                <!-- Download Digital ID Card Button Inside Profile -->
+                <button onclick="triggerVibrate(30); generateDigitalIDCard()" class="mb-3 w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg border border-emerald-400/30 transition-all shrink-0">
+                    <i class="fas fa-id-card text-xs text-emerald-200"></i> Download Digital ID Card
+                </button>
+
                 <!-- Monthly History Section inside Profile -->
-                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 mt-1">Monthly Payment History</div>
-                <div id="history-data" class="space-y-2 overflow-y-auto pr-1 flex-1 max-h-[35vh]"></div>
+                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Monthly Payment History</div>
+                <div id="history-data" class="space-y-2 overflow-y-auto pr-1 flex-1 max-h-[30vh]"></div>
+            </div>
+        </div>
+
+        <!-- Next-Level Executive Visiting Card Style ID Template -->
+        <div id="digital-id-card-template" style="position: absolute; left: -9999px; top: 0; width: 600px; background: linear-gradient(135deg, #050b14 0%, #0f172a 100%); border: 2px solid rgba(52, 211, 153, 0.5); border-radius: 20px; padding: 30px; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; box-shadow: 0 25px 50px rgba(0,0,0,0.9);">
+            
+            <!-- Header: Executive Foundation Title -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 16px; margin-bottom: 22px;">
+                <div>
+                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 3px; color: #34d399; text-transform: uppercase; margin-bottom: 2px;">Family Trust & Care Foundation</div>
+                    <div style="font-size: 18px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px;">Official Executive Identity Card</div>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(52, 211, 153, 0.4); padding: 6px 14px; border-radius: 30px; text-align: center;">
+                    <span id="card-template-id" style="font-size: 13px; font-weight: 900; color: #34d399; letter-spacing: 1px;">FT-00</span>
+                </div>
+            </div>
+
+            <!-- Body: Photo & Credentials -->
+            <div style="display: flex; align-items: center; gap: 24px; margin-bottom: 24px; background: rgba(30, 41, 59, 0.65); padding: 18px 22px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08);">
+                <img id="card-template-img" crossorigin="anonymous" src="" style="width: 100px; height: 100px; border-radius: 14px; object-fit: cover; border: 2px solid #34d399; box-shadow: 0 6px 16px rgba(0,0,0,0.6); flex-shrink: 0;">
+                <div style="flex-grow: 1;">
+                    <span id="card-template-status" style="display: inline-block; font-size: 10px; font-weight: 800; background: #064e3b; color: #34d399; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; border: 1px solid rgba(52,211,153,0.3); margin-bottom: 8px; letter-spacing: 0.5px;">Executive Member</span>
+                    <h3 id="card-template-name" style="font-size: 18px; font-weight: 900; color: #ffffff; text-transform: uppercase; margin: 0 0 6px 0; letter-spacing: 0.5px; line-height: 1.2;">--</h3>
+                    <p id="card-template-phone" style="font-size: 13px; font-weight: 700; color: #cbd5e1; margin: 0; letter-spacing: 0.5px;"><i class="fas fa-phone-alt" style="font-size: 11px; margin-right: 6px; color: #34d399;"></i>--</p>
+                </div>
+            </div>
+
+            <!-- Footer: Network Signature & Year -->
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px;">
+                <span>Authorized By: <strong style="color: #34d399; font-weight: 900;">Mughals Brothers Network</strong></span>
+                <span>© 2026 FTCF</span>
             </div>
         </div>
 
@@ -289,19 +307,7 @@
             </div>
         </div>
 
-        <div class="notice-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl">
-            <div class="flex items-center gap-2 mb-1.5">
-                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/40 shrink-0">
-                    <i class="fas fa-bell text-amber-400 text-[9px] sm:text-[10px]"></i>
-                </div>
-                <h4 class="font-bold uppercase tracking-widest text-xs text-amber-300">Important Notice</h4>
-            </div>
-            <p class="text-xs leading-relaxed text-amber-100/90 font-medium dir-rtl text-right">
-                تمام بھائیوں سے گزارش ہے کہ ہر مہینے کی 10 تاریخ تک اپنی پیمنٹ جمع کروا دیا کریں، تاکہ نہ سسٹم میں رکاوٹ آئے اور نہ ہی آپ پر بوجھ بڑھے۔ شکریہ۔
-            </p>
-        </div>
-
-        <div class="text-center opacity-40 text-[9px] font-bold uppercase tracking-[0.25em] pt-2 text-slate-500">
+        <div class="text-center opacity-40 text-[9px] font-bold uppercase tracking-[0.25em] pt-4 text-slate-500">
             @FTCF2026 Founder Mughal Brothers
         </div>
     </main>
@@ -342,6 +348,7 @@
         let globalMainData = [];
         let grandTotalGlobal = 0;
         let availableMonths = [];
+        let currentActiveMember = null;
 
         Promise.all([
             fetch(mainSheet).then(res => res.text()),
@@ -354,7 +361,6 @@
             document.getElementById('grand-total').innerText = "Rs. " + grandTotalGlobal.toLocaleString();
             document.getElementById('last-updated').innerText = "Last Updated: " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-            // Extract unique months from history
             let monthsSet = [];
             historyData.forEach(row => {
                 const vals = Object.values(row);
@@ -408,8 +414,8 @@
             });
 
             if(!memberInfo) return;
+            currentActiveMember = memberInfo;
 
-            // Populate profile modal details
             document.getElementById('profile-modal-name').innerText = memberInfo.name;
             document.getElementById('profile-modal-id').innerText = memberInfo["Member ID"] || 'FT-00';
             document.getElementById('profile-modal-phone').innerHTML = `<i class="fas fa-phone-alt text-[9px] mr-1.5"></i>${memberInfo.phone || 'No Phone'}`;
@@ -434,6 +440,40 @@
                 container.innerHTML = '<p class="text-xs text-center text-slate-500 py-6">No history records found.</p>';
             }
             document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function generateDigitalIDCard() {
+            if(!currentActiveMember) return;
+
+            const m = currentActiveMember;
+            const profilePic = m.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=0f172a&color=34d399`;
+            const memberId = m["Member ID"] || 'FT-00';
+            
+            let assignedStatus = 'Executive Member';
+            if (memberId === 'FT-01') assignedStatus = 'Secretary';
+            else if (memberId === 'FT-02') assignedStatus = 'Managing Director';
+            else if (memberId === 'FT-07') assignedStatus = 'General Secretary';
+
+            document.getElementById('card-template-name').innerText = m.name;
+            document.getElementById('card-template-id').innerText = memberId;
+            document.getElementById('card-template-status').innerText = assignedStatus;
+            document.getElementById('card-template-phone').innerHTML = `<i class="fas fa-phone-alt" style="font-size: 11px; margin-right: 6px; color: #34d399;"></i>${m.phone || 'No Phone'}`;
+            document.getElementById('card-template-img').src = profilePic;
+
+            const cardElement = document.getElementById('digital-id-card-template');
+
+            html2canvas(cardElement, {
+                scale: 3,
+                backgroundColor: null,
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `FTCF_ID_Card_${memberId}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                alert('Digital ID Card generation failed. Please try again.');
+            });
         }
 
         function openReportCardModal() {
