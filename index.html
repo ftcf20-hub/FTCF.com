@@ -6,6 +6,7 @@
     <title>FTCF | Member Ledger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
@@ -19,7 +20,6 @@
             transition: background-color 0.8s ease;
         }
 
-        /* Dynamic Weather Overlays for Dark Theme */
         .theme-sunny .ambient-glow-1 {
             background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(0,0,0,0) 70%) !important;
         }
@@ -28,7 +28,6 @@
             background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(0,0,0,0) 70%) !important;
         }
 
-        /* Neon Glow Accents */
         .ambient-glow-1 {
             position: absolute;
             top: -100px;
@@ -53,16 +52,14 @@
             z-index: 0;
         }
 
-        /* Glassmorphism Dark Modal */
         .glass-card {
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Total Card Neon Gradient */
         .total-card {
             background: linear-gradient(135deg, rgba(6, 78, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
             border: 1px solid rgba(16, 185, 129, 0.35);
@@ -79,7 +76,36 @@
             background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.8), transparent);
         }
 
-        /* Dark Amber Notice Card */
+        /* Next-Level Professional Button Styling */
+        .btn-next-level {
+            background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #2563eb 100%);
+            background-size: 200% auto;
+            border: 1px solid rgba(52, 211, 153, 0.4);
+            box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.5), 0 0 15px rgba(13, 148, 136, 0.3);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-next-level::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-next-level:hover::before {
+            left: 100%;
+        }
+
+        .btn-next-level:hover {
+            background-position: right center;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(5, 150, 105, 0.7), 0 0 20px rgba(37, 99, 235, 0.5);
+            border-color: rgba(52, 211, 153, 0.8);
+        }
+
         .notice-card {
             background: linear-gradient(145deg, rgba(120, 53, 15, 0.4) 0%, rgba(30, 27, 75, 0.4) 100%);
             border: 1px solid rgba(245, 158, 11, 0.3);
@@ -95,7 +121,6 @@
             background: #f59e0b;
         }
 
-        /* Custom Scrollbar */
         .scroll-container {
             background: rgba(15, 23, 42, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -104,7 +129,6 @@
         #members-list::-webkit-scrollbar { width: 4px; }
         #members-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
 
-        /* Split 2-Tier Glass Card Style */
         .split-tier-card {
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             background: rgba(30, 41, 59, 0.6);
@@ -125,7 +149,6 @@
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Neon Pulse Dot */
         .pulse-dot {
             width: 6px;
             height: 6px;
@@ -155,7 +178,7 @@
             Family Trust & Care Foundation
         </h1>
         <p class="inline-block mt-3 px-3.5 py-1.5 rounded-full text-amber-300 font-medium text-[11px] sm:text-xs tracking-wide bg-amber-500/10 border border-amber-400/20 backdrop-blur-xl max-w-[90%]">
-            "Amanat me khiyanat nahi,Behtreen Nizam Asal Kamyabi"
+            "Amanat me khiyanat nahi, Behtreen Nizam Asal Kamyabi"
         </p>
     </header>
 
@@ -167,6 +190,10 @@
             </div>
             <h2 id="grand-total" class="text-3xl sm:text-4xl font-black mt-2 text-emerald-400 tracking-tight drop-shadow-md">Rs. 0</h2>
             <p id="last-updated" class="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-400 opacity-80 mt-2"></p>
+            
+            <button onclick="triggerVibrate(40); openReportCardModal()" class="mt-4 w-full py-3 px-5 rounded-xl btn-next-level text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2.5">
+                <i class="fas fa-file-invoice-dollar text-sm text-emerald-300"></i> Generate Report Card
+            </button>
         </div>
 
         <section>
@@ -190,6 +217,46 @@
             </div>
         </div>
 
+        <!-- Professional Table Report Card Modal -->
+        <div id="report-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-2 z-50 transition-all duration-300">
+            <div class="glass-card p-3 sm:p-5 rounded-2xl w-full max-w-2xl max-h-[92vh] flex flex-col border border-emerald-500/40 shadow-2xl relative">
+                <div class="flex justify-between items-center mb-2 pb-2 border-b border-slate-800">
+                    <div>
+                        <h3 class="font-black text-emerald-400 text-xs sm:text-sm uppercase tracking-wide">FTCF Official Table Report</h3>
+                        <p id="report-datetime" class="text-[9px] text-slate-400 font-semibold"></p>
+                    </div>
+                    <button onclick="triggerVibrate(20); document.getElementById('report-modal').classList.add('hidden')" class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center shrink-0 transition-all">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </div>
+                
+                <!-- Printable Light Theme Card Container -->
+                <div id="printable-card" class="bg-white text-slate-900 p-5 rounded-xl border border-slate-300 overflow-y-auto flex-1 text-[11px] max-h-[65vh] shadow-inner">
+                    <div class="text-center mb-3 pb-2.5 border-b-2 border-slate-200">
+                        <h2 class="text-base font-black text-slate-900 uppercase tracking-wider">Family Trust & Care Foundation</h2>
+                        <p class="text-[10px] text-emerald-700 font-bold mt-0.5">Contribution Ledger & Summary Report Card</p>
+                        <div class="flex justify-center items-center gap-4 mt-2 text-[10px] font-semibold text-slate-600">
+                            <span><i class="far fa-calendar-alt text-emerald-600 mr-1"></i>Duration: <strong id="report-duration" class="text-slate-800">--</strong></span>
+                            <span>•</span>
+                            <span><i class="fas fa-wallet text-emerald-600 mr-1"></i>Total Fund: <strong id="report-badge-total" class="text-emerald-700 font-bold">Rs. 0</strong></span>
+                        </div>
+                    </div>
+                    
+                    <div id="report-table-container" class="min-w-[450px]">
+                        <!-- Dynamic table generated via script -->
+                    </div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="pt-3 mt-2 border-t border-slate-800 flex items-center justify-between gap-2">
+                    <span id="report-modal-total" class="text-xs font-black text-emerald-400">Total: Rs. 0</span>
+                    <button onclick="triggerVibrate(30); generateAndDownloadReportCard()" class="px-4 py-2.5 rounded-xl btn-next-level text-white font-black text-xs uppercase tracking-wide flex items-center gap-2">
+                        <i class="fas fa-download text-emerald-300"></i> Download HD Card
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="notice-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl">
             <div class="flex items-center gap-2 mb-1.5">
                 <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/40 shrink-0">
@@ -208,7 +275,6 @@
     </main>
 
     <script>
-        // Automatic Weather Detection & Theme Switcher Mode
         async function autoWeatherTheme() {
             if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(async (position) => {
@@ -217,64 +283,54 @@
                         const lon = position.coords.longitude;
                         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
                         const data = await res.json();
-                        
                         const code = data.current_weather.weathercode;
                         const weatherStatusEl = document.getElementById('weather-status');
 
-                        // Open-Meteo Weather Codes Mapping
                         if (code === 0 || code === 1) {
                             document.body.classList.add('theme-sunny');
                             if (weatherStatusEl) weatherStatusEl.innerText = 'Sunny Mode';
                         } else if ([51, 53, 55, 61, 63, 65, 80, 81].includes(code)) {
                             document.body.classList.add('theme-rainy');
                             if (weatherStatusEl) weatherStatusEl.innerText = 'Rainy Mode';
-                        } else {
-                            if (weatherStatusEl) weatherStatusEl.innerText = 'Live Portal';
                         }
-                    } catch (e) {
-                        console.log('Weather sync bypassed');
-                    }
+                    } catch (e) {}
                 }, () => {});
             }
         }
         autoWeatherTheme();
 
-        // Haptic feedback function
         function triggerVibrate(ms) {
-            if (window.navigator.vibrate) {
-                window.navigator.vibrate(ms);
-            }
+            if (window.navigator.vibrate) window.navigator.vibrate(ms);
         }
 
         const mainSheet = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtsZyNI2Ss1ACTIO7X1zAND4Q-mGhFdKSVcvx8amNxfGsFQfA2A7kBLHJgTJ9DGECqNNZ40iHW7zDc/pub?output=csv';
         const historySheet = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtsZyNI2Ss1ACTIO7X1zAND4Q-mGhFdKSVcvx8amNxfGsFQfA2A7kBLHJgTJ9DGECqNNZ40iHW7zDc/pub?gid=2038080316&single=true&output=csv';
         
         let historyData = [];
+        let globalMainData = [];
+        let grandTotalGlobal = 0;
 
         Promise.all([
             fetch(mainSheet).then(res => res.text()),
             fetch(historySheet).then(res => res.text())
         ]).then(([mainCsv, historyCsv]) => {
-            const main = Papa.parse(mainCsv, {header: true, dynamicTyping: true}).data.filter(m => m.name);
+            globalMainData = Papa.parse(mainCsv, {header: true, dynamicTyping: true}).data.filter(m => m.name);
             historyData = Papa.parse(historyCsv, {header: true, dynamicTyping: true}).data;
 
-            let grandTotal = main.reduce((sum, m) => sum + (m.fund || 0), 0);
-            document.getElementById('grand-total').innerText = "Rs. " + grandTotal.toLocaleString();
-            
+            grandTotalGlobal = globalMainData.reduce((sum, m) => sum + (m.fund || 0), 0);
+            document.getElementById('grand-total').innerText = "Rs. " + grandTotalGlobal.toLocaleString();
             document.getElementById('last-updated').innerText = "Last Updated: " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
             const list = document.getElementById('members-list');
-            main.forEach((m, idx) => {
+            globalMainData.forEach((m, idx) => {
                 const profilePic = m.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=0f172a&color=34d399`;
                 
-                // Concept 3: Split 2-Tier Glass Card Template
                 list.innerHTML += `
                     <div onclick="triggerVibrate(30); showHistory('${m.name}')" class="split-tier-card cursor-pointer group">
-                        <!-- Top Tier: Photo & Member Identity -->
                         <div class="p-3 flex items-center justify-between">
                             <div class="flex items-center gap-3 min-w-0">
                                 <div class="relative shrink-0">
-                                    <img src="${profilePic}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-slate-700 group-hover:ring-emerald-400/80 transition-all">
+                                    <img src="${profilePic}" class="w-10 h-10 rounded-xl object-cover ring-1 ring-slate-700 group-hover:ring-emerald-400/85 transition-all">
                                     <span class="absolute -bottom-1 -right-1 text-[8px] font-black bg-slate-900 text-emerald-400 border border-emerald-500/30 px-1 rounded-md">
                                         #${idx + 1}
                                     </span>
@@ -288,14 +344,10 @@
                                 Active
                             </span>
                         </div>
-                        
-                        <!-- Bottom Tier: Fund Amount & History Prompt -->
                         <div class="bottom-tier px-3.5 py-2 flex items-center justify-between">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Fund Contributed</span>
                             <div class="flex items-center gap-2">
-                                <span class="text-[12px] font-black text-emerald-400 tracking-tight">
-                                    Rs. ${m.fund.toLocaleString()}
-                                </span>
+                                <span class="text-[12px] font-black text-emerald-400 tracking-tight">Rs. ${m.fund.toLocaleString()}</span>
                                 <i class="fas fa-chevron-right text-[10px] text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all"></i>
                             </div>
                         </div>
@@ -327,6 +379,97 @@
                 container.innerHTML = '<p class="text-xs text-center text-slate-500 py-6">No records found.</p>';
             }
             document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function openReportCardModal() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('report-datetime').innerText = `Generated: ${dateStr} | ${timeStr}`;
+
+            let monthsSet = [];
+            historyData.forEach(row => {
+                const vals = Object.values(row);
+                if(vals[1] && !monthsSet.includes(vals[1].toString().trim())) {
+                    monthsSet.push(vals[1].toString().trim());
+                }
+            });
+            if(monthsSet.length === 0) monthsSet = ['Current Month'];
+
+            // Set duration text (First month to Last month)
+            const durationText = monthsSet.length > 1 ? `${monthsSet[0]} - ${monthsSet[monthsSet.length - 1]}` : monthsSet[0];
+            document.getElementById('report-duration').innerText = durationText;
+            document.getElementById('report-badge-total').innerText = "Rs. " + grandTotalGlobal.toLocaleString();
+
+            // Light Theme Table Layout
+            let tableHTML = `
+                <table class="w-full text-left border-collapse border border-slate-300 text-[10px]">
+                    <thead>
+                        <tr class="bg-emerald-800 text-white border-b border-slate-300">
+                            <th class="p-2 border-r border-slate-300 font-bold uppercase">Member Name</th>
+            `;
+            monthsSet.forEach(m => {
+                tableHTML += `<th class="p-2 border-r border-slate-300 text-center font-bold uppercase">${m}</th>`;
+            });
+            tableHTML += `<th class="p-2 text-center font-bold uppercase">Total</th></tr></thead><tbody>`;
+
+            let grandTotalSum = 0;
+            globalMainData.forEach((member, index) => {
+                let rowTotal = 0;
+                tableHTML += `<tr class="${index % 2 === 0 ? 'bg-slate-50' : 'bg-white'} border-b border-slate-200">`;
+                tableHTML += `<td class="p-2 border-r border-slate-300 font-bold text-slate-900 uppercase truncate max-w-[100px]">${member.name}</td>`;
+
+                monthsSet.forEach(month => {
+                    const match = historyData.find(r => {
+                        const vals = Object.values(r);
+                        return vals[0] && vals[0].toString().trim() === member.name.trim() && vals[1] && vals[1].toString().trim() === month;
+                    });
+                    const amt = match ? (parseInt(Object.values(match)[2]) || 0) : 0;
+                    rowTotal += amt;
+                    tableHTML += `<td class="p-2 border-r border-slate-300 text-center text-slate-700 font-medium">${amt > 0 ? amt.toLocaleString() : '-'}</td>`;
+                });
+
+                grandTotalSum += rowTotal;
+                tableHTML += `<td class="p-2 text-center font-black text-emerald-800 bg-emerald-50">${rowTotal.toLocaleString()}</td></tr>`;
+            });
+
+            tableHTML += `</tbody></table>`;
+            document.getElementById('report-table-container').innerHTML = tableHTML;
+            document.getElementById('report-modal-total').innerText = "Total: Rs. " + grandTotalSum.toLocaleString();
+            document.getElementById('report-modal').classList.remove('hidden');
+        }
+
+        // HD Export Handler for Light Theme Card
+        function generateAndDownloadReportCard() {
+            const originalCard = document.getElementById('printable-card');
+            
+            const clone = originalCard.cloneNode(true);
+            clone.style.position = 'absolute';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.width = '620px';
+            clone.style.maxHeight = 'none';
+            clone.style.overflow = 'visible';
+            clone.style.boxShadow = 'none';
+            
+            document.body.appendChild(clone);
+
+            html2canvas(clone, { 
+                scale: 3, 
+                backgroundColor: '#ffffff',
+                useCORS: true,
+                windowWidth: 800
+            }).then(canvas => {
+                document.body.removeChild(clone);
+
+                const link = document.createElement('a');
+                link.download = `FTCF_Report_Card_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                if(document.body.contains(clone)) document.body.removeChild(clone);
+                alert('Image generation failed. Please try again.');
+            });
         }
     </script>
 </body>
