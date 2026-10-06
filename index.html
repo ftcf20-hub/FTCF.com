@@ -204,23 +204,23 @@
             <div id="members-list" class="scroll-container space-y-3 max-h-[340px] sm:max-h-[400px] overflow-y-auto p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl backdrop-blur-xl"></div>
         </section>
 
-        <!-- History Modal -->
+        <!-- History Modal (Scrollable Enabled) -->
         <div id="modal" class="fixed inset-0 bg-black/70 backdrop-blur-md hidden flex items-center justify-center p-4 z-50 transition-all duration-300">
-            <div class="glass-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl w-full max-w-xs sm:max-w-sm max-h-[75vh] flex flex-col border border-slate-700 shadow-2xl relative">
-                <div class="flex justify-between items-center mb-3 pb-2.5 border-b border-slate-800">
+            <div class="glass-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl w-full max-w-xs sm:max-w-sm max-h-[80vh] flex flex-col border border-slate-700 shadow-2xl relative">
+                <div class="flex justify-between items-center mb-3 pb-2.5 border-b border-slate-800 shrink-0">
                     <h3 id="modal-name" class="font-bold text-slate-100 text-xs sm:text-sm tracking-wide truncate pr-2"></h3>
                     <button onclick="triggerVibrate(20); document.getElementById('modal').classList.add('hidden')" class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center shrink-0 transition-all hover:bg-slate-700">
                         <i class="fas fa-times text-xs"></i>
                     </button>
                 </div>
-                <div id="history-data" class="space-y-2 overflow-y-auto pr-1"></div>
+                <div id="history-data" class="space-y-2 overflow-y-auto pr-1 flex-1 max-h-[50vh]"></div>
             </div>
         </div>
 
-        <!-- Professional Table Report Card Modal -->
+        <!-- Professional Table Report Card Modal with Duration Filters -->
         <div id="report-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-2 z-50 transition-all duration-300">
-            <div class="glass-card p-3 sm:p-5 rounded-2xl w-full max-w-2xl max-h-[92vh] flex flex-col border border-emerald-500/40 shadow-2xl relative">
-                <div class="flex justify-between items-center mb-2 pb-2 border-b border-slate-800">
+            <div class="glass-card p-3 sm:p-5 rounded-2xl w-full max-w-2xl max-h-[95vh] flex flex-col border border-emerald-500/40 shadow-2xl relative">
+                <div class="flex justify-between items-center mb-2 pb-2 border-b border-slate-800 shrink-0">
                     <div>
                         <h3 class="font-black text-emerald-400 text-xs sm:text-sm uppercase tracking-wide">FTCF Official Table Report</h3>
                         <p id="report-datetime" class="text-[9px] text-slate-400 font-semibold"></p>
@@ -229,9 +229,25 @@
                         <i class="fas fa-times text-xs"></i>
                     </button>
                 </div>
+
+                <!-- Duration Filter Controls -->
+                <div class="grid grid-cols-2 gap-2 mb-3 bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 shrink-0 text-[11px]">
+                    <div>
+                        <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">From Month:</label>
+                        <select id="filter-from-month" onchange="updateReportTable()" class="w-full bg-slate-950 text-slate-200 border border-slate-700 rounded-lg p-1.5 text-xs focus:outline-none focus:border-emerald-500">
+                            <!-- Dynamic Options -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">To Month:</label>
+                        <select id="filter-to-month" onchange="updateReportTable()" class="w-full bg-slate-950 text-slate-200 border border-slate-700 rounded-lg p-1.5 text-xs focus:outline-none focus:border-emerald-500">
+                            <!-- Dynamic Options -->
+                        </select>
+                    </div>
+                </div>
                 
                 <!-- Printable Light Theme Card Container -->
-                <div id="printable-card" class="bg-white text-slate-900 p-5 rounded-xl border border-slate-300 overflow-y-auto flex-1 text-[11px] max-h-[65vh] shadow-inner">
+                <div id="printable-card" class="bg-white text-slate-900 p-5 rounded-xl border border-slate-300 overflow-y-auto flex-1 text-[11px] max-h-[52vh] shadow-inner">
                     <div class="text-center mb-3 pb-2.5 border-b-2 border-slate-200">
                         <h2 class="text-base font-black text-slate-900 uppercase tracking-wider">Family Trust & Care Foundation</h2>
                         <p class="text-[10px] text-emerald-700 font-bold mt-0.5">Contribution Ledger & Summary Report Card</p>
@@ -248,7 +264,7 @@
                 </div>
 
                 <!-- Action Controls -->
-                <div class="pt-3 mt-2 border-t border-slate-800 flex items-center justify-between gap-2">
+                <div class="pt-3 mt-2 border-t border-slate-800 flex items-center justify-between gap-2 shrink-0">
                     <span id="report-modal-total" class="text-xs font-black text-emerald-400">Total: Rs. 0</span>
                     <button onclick="triggerVibrate(30); generateAndDownloadReportCard()" class="px-4 py-2.5 rounded-xl btn-next-level text-white font-black text-xs uppercase tracking-wide flex items-center gap-2">
                         <i class="fas fa-download text-emerald-300"></i> Download HD Card
@@ -309,6 +325,7 @@
         let historyData = [];
         let globalMainData = [];
         let grandTotalGlobal = 0;
+        let availableMonths = [];
 
         Promise.all([
             fetch(mainSheet).then(res => res.text()),
@@ -320,6 +337,16 @@
             grandTotalGlobal = globalMainData.reduce((sum, m) => sum + (m.fund || 0), 0);
             document.getElementById('grand-total').innerText = "Rs. " + grandTotalGlobal.toLocaleString();
             document.getElementById('last-updated').innerText = "Last Updated: " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Extract unique months from history
+            let monthsSet = [];
+            historyData.forEach(row => {
+                const vals = Object.values(row);
+                if(vals[1] && !monthsSet.includes(vals[1].toString().trim())) {
+                    monthsSet.push(vals[1].toString().trim());
+                }
+            });
+            availableMonths = monthsSet;
 
             const list = document.getElementById('members-list');
             globalMainData.forEach((m, idx) => {
@@ -387,39 +414,63 @@
             const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             document.getElementById('report-datetime').innerText = `Generated: ${dateStr} | ${timeStr}`;
 
-            let monthsSet = [];
-            historyData.forEach(row => {
-                const vals = Object.values(row);
-                if(vals[1] && !monthsSet.includes(vals[1].toString().trim())) {
-                    monthsSet.push(vals[1].toString().trim());
-                }
-            });
+            let monthsSet = [...availableMonths];
             if(monthsSet.length === 0) monthsSet = ['Current Month'];
 
-            // Set duration text (First month to Last month)
-            const durationText = monthsSet.length > 1 ? `${monthsSet[0]} - ${monthsSet[monthsSet.length - 1]}` : monthsSet[0];
-            document.getElementById('report-duration').innerText = durationText;
-            document.getElementById('report-badge-total').innerText = "Rs. " + grandTotalGlobal.toLocaleString();
+            // Populate From and To Dropdowns
+            const fromSelect = document.getElementById('filter-from-month');
+            const toSelect = document.getElementById('filter-to-month');
+            
+            fromSelect.innerHTML = monthsSet.map(m => `<option value="${m}">${m}</option>`).join('');
+            toSelect.innerHTML = monthsSet.map(m => `<option value="${m}">${m}</option>`).join('');
 
-            // Light Theme Table Layout
+            // Set default: From = first month, To = last month
+            fromSelect.value = monthsSet[0];
+            toSelect.value = monthsSet[monthsSet.length - 1];
+
+            updateReportTable();
+            document.getElementById('report-modal').classList.remove('hidden');
+        }
+
+        function updateReportTable() {
+            const fromMonth = document.getElementById('filter-from-month').value;
+            const toMonth = document.getElementById('filter-to-month').value;
+
+            // Determine index range of months
+            const fromIdx = availableMonths.indexOf(fromMonth);
+            const toIdx = availableMonths.indexOf(toMonth);
+
+            let selectedMonths = [];
+            if (fromIdx !== -1 && toIdx !== -1 && fromIdx <= toIdx) {
+                selectedMonths = availableMonths.slice(fromIdx, toIdx + 1);
+            } else if (fromIdx !== -1 && toIdx !== -1 && fromIdx > toIdx) {
+                selectedMonths = [fromMonth]; // fallback if invalid range
+            } else {
+                selectedMonths = availableMonths.length > 0 ? availableMonths : ['Current Month'];
+            }
+
+            const durationText = selectedMonths.length > 1 ? `${selectedMonths[0]} - ${selectedMonths[selectedMonths.length - 1]}` : selectedMonths[0];
+            document.getElementById('report-duration').innerText = durationText;
+
+            // Build Light Theme Table Layout
             let tableHTML = `
                 <table class="w-full text-left border-collapse border border-slate-300 text-[10px]">
                     <thead>
                         <tr class="bg-emerald-800 text-white border-b border-slate-300">
                             <th class="p-2 border-r border-slate-300 font-bold uppercase">Member Name</th>
             `;
-            monthsSet.forEach(m => {
+            selectedMonths.forEach(m => {
                 tableHTML += `<th class="p-2 border-r border-slate-300 text-center font-bold uppercase">${m}</th>`;
             });
             tableHTML += `<th class="p-2 text-center font-bold uppercase">Total</th></tr></thead><tbody>`;
 
-            let grandTotalSum = 0;
+            let overallRangeTotal = 0;
             globalMainData.forEach((member, index) => {
                 let rowTotal = 0;
                 tableHTML += `<tr class="${index % 2 === 0 ? 'bg-slate-50' : 'bg-white'} border-b border-slate-200">`;
                 tableHTML += `<td class="p-2 border-r border-slate-300 font-bold text-slate-900 uppercase truncate max-w-[100px]">${member.name}</td>`;
 
-                monthsSet.forEach(month => {
+                selectedMonths.forEach(month => {
                     const match = historyData.find(r => {
                         const vals = Object.values(r);
                         return vals[0] && vals[0].toString().trim() === member.name.trim() && vals[1] && vals[1].toString().trim() === month;
@@ -429,14 +480,14 @@
                     tableHTML += `<td class="p-2 border-r border-slate-300 text-center text-slate-700 font-medium">${amt > 0 ? amt.toLocaleString() : '-'}</td>`;
                 });
 
-                grandTotalSum += rowTotal;
+                overallRangeTotal += rowTotal;
                 tableHTML += `<td class="p-2 text-center font-black text-emerald-800 bg-emerald-50">${rowTotal.toLocaleString()}</td></tr>`;
             });
 
             tableHTML += `</tbody></table>`;
             document.getElementById('report-table-container').innerHTML = tableHTML;
-            document.getElementById('report-modal-total').innerText = "Total: Rs. " + grandTotalSum.toLocaleString();
-            document.getElementById('report-modal').classList.remove('hidden');
+            document.getElementById('report-badge-total').innerText = "Rs. " + overallRangeTotal.toLocaleString();
+            document.getElementById('report-modal-total').innerText = "Total: Rs. " + overallRangeTotal.toLocaleString();
         }
 
         // HD Export Handler for Light Theme Card
